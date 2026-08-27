@@ -27,17 +27,17 @@
   /* ===== BG + FLOATING SPRITES ===== */
   #bg{position:fixed;inset:0;z-index:0;transition:background .6s ease}
   .bg0,.bg3{background:var(--pink)} .bg1,.bg7{background:var(--lemon)} .bg2{background:var(--cream)}
-  .bg4,.bg8{background:var(--pink2)} .bg5{background:var(--pink-lt)} .bg6{background:#170309} .bg9{background:#0a0006}
+  .bg4,.bg8{background:var(--pink)} .bg5{background:var(--pink-lt)} .bg6{background:#170309} .bg9{background:#0a0006}
   .bg10{background:radial-gradient(120% 90% at 50% 22%,#F73AAE 0%,var(--pink) 48%,var(--pink2) 100%)}
   /* subtle static brand accents */
-  .corner{position:fixed;z-index:2;opacity:.5;pointer-events:none}
+  .corner{position:fixed;z-index:2;pointer-events:none}
   .cBall{left:26px;bottom:9.5vh;width:84px}
   .cLem{display:none}  /* bottom-right is now the rotating pin */
   /* ===== BRAND CHROME (persistent) ===== */
   #logo{position:fixed;left:50%;top:1.4vh;transform:translateX(-50%);z-index:60;pointer-events:none}
   #logo img{height:8.2vh;display:block}
   .c10 #logo{display:none}  /* truck slide has its own centered Nancy */
-  .mascot{position:fixed;right:22px;top:14px;width:108px;height:auto;z-index:60;opacity:.5;animation:bob 3.2s ease-in-out infinite}
+  .mascot{position:fixed;right:22px;top:14px;width:108px;height:auto;z-index:60;animation:bob 3.2s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
   /* event ticker footer */
   #foot{position:fixed;left:0;right:0;bottom:0;height:7.2vh;min-height:52px;background:var(--pink);z-index:60;
@@ -167,9 +167,9 @@
 </head>
 <body>
 <div id="logo"><img src="art/logo-cream.png" alt="Nancy"></div>
-<svg class="mascot" viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#EF5BB0"/><path d="M6 36 Q50 14 94 36" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/><path d="M6 64 Q50 86 94 64" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/></svg>
+<img class="mascot" src="art/ball-green.svg" alt="">
 <div id="name"></div>
-<svg class="corner cBall" viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#EF5BB0"/><path d="M6 36 Q50 14 94 36" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/><path d="M6 64 Q50 86 94 64" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/></svg>
+<img class="corner cBall" src="art/ball-green.svg" alt="">
 <svg class="corner cLem" viewBox="0 0 80 70"><path d="M58 14 q14-9 22-3 q-7 12-22 9z" fill="#5FB85A"/><ellipse cx="40" cy="42" rx="30" ry="24" fill="#FCD94A" stroke="#E8B400" stroke-width="2.5"/><ellipse cx="30" cy="34" rx="8" ry="5" fill="#FFF3B0" opacity=".7"/></svg>
 <div id="bg" class="bg10"></div>
 <img id="pin" src="art/ball-green.svg" alt="">
@@ -210,7 +210,7 @@ const LOGO_CREAM='art/logo-cream.png',LOGO_INK='art/logo-ink.png';
 // cream (c2), lemon (c7) and pink-lt (c5) are light — the cream wordmark
 // needs the ink one there now that it has no keyline to lift it off
 const LIGHT_BG=[2,5,7];
-const PINS=['art/ball-green.svg','art/ball-pink.svg','art/ball-green2.svg'];
+const PINS=['art/ball-green.svg','art/ball-green2.svg'];
 ['art/smash-ace-hero.png','art/logo-cream.png','art/logo-ink.png',...PINS].forEach(s=>{const im=new Image();im.src=s;});
 const RANSOM=['#ED1E9C','#FCD94A','#fff','#2A0A1E','#C0117A'];
 const stage=document.getElementById('stage'),nameEl=document.getElementById('name');
