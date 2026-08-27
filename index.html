@@ -35,7 +35,7 @@
   .cLem{display:none}  /* bottom-right is now the rotating pin */
   /* ===== BRAND CHROME (persistent) ===== */
   #logo{position:fixed;left:50%;top:1.4vh;transform:translateX(-50%);z-index:60;pointer-events:none}
-  #logo img{height:8.2vh;display:block;filter:drop-shadow(2px 3px 0 rgba(42,10,30,.5)) drop-shadow(1.4px 0 0 rgba(42,10,30,.45)) drop-shadow(-1.4px 0 0 rgba(42,10,30,.45)) drop-shadow(0 1.4px 0 rgba(42,10,30,.45)) drop-shadow(0 -1.4px 0 rgba(42,10,30,.45))}
+  #logo img{height:8.2vh;display:block}
   .c10 #logo{display:none}  /* truck slide has its own centered Nancy */
   .mascot{position:fixed;right:22px;top:14px;width:108px;height:auto;z-index:60;opacity:.5;animation:bob 3.2s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
@@ -123,7 +123,7 @@
   .c10 .tline{font-family:var(--cond);color:var(--lemon);font-size:6.6vh;letter-spacing:.02em;text-transform:uppercase;
     text-align:center;line-height:.95;min-height:12.5vh;padding:0 6vw;
     text-shadow:3px 4px 0 var(--plum);animation:tlinein .5s cubic-bezier(.2,1.5,.35,1) both}
-  .c10 .bigwm{height:17.5vh;margin-top:.2vh;filter:drop-shadow(5px 7px 0 rgba(42,10,30,.42));
+  .c10 .bigwm{height:17.5vh;margin-top:.2vh;
     animation:wmpin .6s cubic-bezier(.2,1.5,.35,1) both}
   .c10 .truckwrap{position:absolute;left:0;right:0;top:33vh;bottom:7vh;display:flex;justify-content:center;
     align-items:center;animation:drivein 1.05s cubic-bezier(.18,.85,.2,1) both}
@@ -206,8 +206,12 @@ const QUOTES=[
  {q:"World No. 1 pulled out. This never will.",by:"World No. 1"}
 ];
 
+const LOGO_CREAM='art/logo-cream.png',LOGO_INK='art/logo-ink.png';
+// cream (c2), lemon (c7) and pink-lt (c5) are light — the cream wordmark
+// needs the ink one there now that it has no keyline to lift it off
+const LIGHT_BG=[2,5,7];
 const PINS=['art/ball-green.svg','art/ball-pink.svg','art/ball-green2.svg'];
-['art/smash-ace-hero.png','art/logo-cream.png',...PINS].forEach(s=>{const im=new Image();im.src=s;});
+['art/smash-ace-hero.png','art/logo-cream.png','art/logo-ink.png',...PINS].forEach(s=>{const im=new Image();im.src=s;});
 const RANSOM=['#ED1E9C','#FCD94A','#fff','#2A0A1E','#C0117A'];
 const stage=document.getElementById('stage'),nameEl=document.getElementById('name');
 const rand=a=>a[Math.floor(Math.random()*a.length)];
@@ -246,7 +250,7 @@ const C=[
  {n:'Glitch',c:9,f:()=>cycle(it=>{stage.innerHTML=`<div class="qb"><div class="q" data-t="“${esc(it.q)}”">“${esc(it.q)}”</div><div class="by">— ${esc(it.by)}</div></div>`;fitLen(fq(),it.q);},2900)},
 ];
 
-function show(i){if(cleanup)cleanup();cur=(i+C.length)%C.length;const cc=C[cur].c;stage.className='';void stage.offsetWidth;stage.className='c'+cc;document.getElementById('bg').className='bg'+cc;document.getElementById('logo').style.display=(cc===10?'none':'block');const pe=document.getElementById('pin');if(cc===10){pe.style.display='none';}else{pe.style.display='block';pe.src=PINS[cur%PINS.length];pe.style.animation='none';void pe.offsetWidth;pe.style.animation='';}stage.innerHTML='';nameEl.textContent=(cur+1<10?'0':'')+(cur+1)+' · '+C[cur].n;cleanup=C[cur].f();}
+function show(i){if(cleanup)cleanup();cur=(i+C.length)%C.length;const cc=C[cur].c;stage.className='';void stage.offsetWidth;stage.className='c'+cc;document.getElementById('bg').className='bg'+cc;document.getElementById('logo').style.display=(cc===10?'none':'block');document.querySelector('#logo img').src=LIGHT_BG.includes(cc)?LOGO_INK:LOGO_CREAM;const pe=document.getElementById('pin');if(cc===10){pe.style.display='none';}else{pe.style.display='block';pe.src=PINS[cur%PINS.length];pe.style.animation='none';void pe.offsetWidth;pe.style.animation='';}stage.innerHTML='';nameEl.textContent=(cur+1<10?'0':'')+(cur+1)+' · '+C[cur].n;cleanup=C[cur].f();}
 function nextC(){show(cur+1);}
 function startAuto(){clearInterval(autoTimer);autoTimer=setInterval(()=>{if(!paused)nextC();},14000);}
 
