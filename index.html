@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smash the Quiet — Nancy NY Brunch</title>
+<style>
+  @font-face{font-family:'Anton';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/Anton-normal-400.woff2) format('woff2')}
+  @font-face{font-family:'Fraunces';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/Fraunces-normal-600.woff2) format('woff2')}
+  @font-face{font-family:'Fraunces';font-style:normal;font-weight:900;font-display:swap;src:url(fonts/Fraunces-normal-900.woff2) format('woff2')}
+  :root{
+    --pink:#ED1E9C; --pink2:#C0117A; --pink-lt:#F4D9E6; --plum:#2A0A1E;
+    --cream:#FBEFD8; --lemon:#FCD94A; --lemon-dk:#E8B400; --leaf:#5FB85A;
+    --disp:'Fraunces',Georgia,serif; --cond:'Anton',Impact,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--plum);font-family:var(--disp);cursor:none}
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:transparent;z-index:2}
+  .q{font-family:var(--disp);font-weight:900;line-height:.95;letter-spacing:-.015em;padding:0 7vw;max-width:90vw}
+  .qb{display:flex;flex-direction:column;align-items:center;gap:2.4vh;max-width:92vw;padding:0 4vw;position:relative;z-index:3}
+  .by{font-family:var(--cond);font-size:2.7vh;letter-spacing:.05em;text-transform:uppercase;
+    padding:.5vh 1.8vh;border-radius:999px;background:var(--plum);color:var(--cream);white-space:nowrap}
+  .c4 .by,.c6 .by,.c8 .by,.c9 .by{background:var(--lemon);color:var(--plum)}
+  .cby{display:block;font-family:var(--cond);font-size:.42em;letter-spacing:.05em;text-transform:uppercase;color:var(--lemon);margin-top:.4em}
+  .nby{display:block;font-family:var(--cond);font-size:.62em;letter-spacing:.04em;text-transform:uppercase;margin-top:.7em;opacity:.65}
+
+  /* ===== BG + FLOATING SPRITES ===== */
+  #bg{position:fixed;inset:0;z-index:0;transition:background .6s ease}
+  .bg0,.bg3{background:var(--pink)} .bg1,.bg7{background:var(--lemon)} .bg2{background:var(--cream)}
+  .bg4,.bg8{background:var(--pink2)} .bg5{background:var(--pink-lt)} .bg6{background:#170309} .bg9{background:#0a0006}
+  .bg10{background:radial-gradient(120% 90% at 50% 22%,#F73AAE 0%,var(--pink) 48%,var(--pink2) 100%)}
+  /* subtle static brand accents */
+  .corner{position:fixed;z-index:2;opacity:.5;pointer-events:none}
+  .cBall{left:26px;bottom:9.5vh;width:84px}
+  .cLem{display:none}  /* bottom-right is now the rotating pin */
+  /* ===== BRAND CHROME (persistent) ===== */
+  #logo{position:fixed;left:50%;top:1.4vh;transform:translateX(-50%);z-index:60;pointer-events:none}
+  #logo img{height:8.2vh;display:block;filter:drop-shadow(2px 3px 0 rgba(42,10,30,.5)) drop-shadow(1.4px 0 0 rgba(42,10,30,.45)) drop-shadow(-1.4px 0 0 rgba(42,10,30,.45)) drop-shadow(0 1.4px 0 rgba(42,10,30,.45)) drop-shadow(0 -1.4px 0 rgba(42,10,30,.45))}
+  .c10 #logo{display:none}  /* truck slide has its own centered Nancy */
+  .mascot{position:fixed;right:22px;top:14px;width:108px;height:auto;z-index:60;animation:bob 3.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+  /* event ticker footer */
+  #foot{position:fixed;left:0;right:0;bottom:0;height:7.2vh;min-height:52px;background:var(--pink);z-index:60;
+    display:flex;align-items:center;overflow:hidden;border-top:3px solid var(--cream)}
+  #foot .run{white-space:nowrap;font-family:var(--cond);color:var(--cream);font-size:3.4vh;letter-spacing:.06em;
+    animation:run 30s linear infinite;text-transform:uppercase}
+  #foot .run span{padding:0 1.6vw}
+  @keyframes run{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  /* confetti motifs */
+  .deco{position:fixed;z-index:2;pointer-events:none;opacity:.9}
+  /* dev HUD */
+  #name{position:fixed;left:20px;top:16px;color:rgba(255,255,255,.8);font-family:var(--cond);
+    font-size:14px;letter-spacing:.3em;text-transform:uppercase;z-index:61;mix-blend-mode:difference;transition:opacity .4s}
+  #hud{position:fixed;left:0;right:0;bottom:8.4vh;text-align:center;color:rgba(0,0,0,.4);font-family:var(--cond);
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;z-index:61;transition:opacity .4s}
+  .idle #hud,.idle #name{opacity:0}
+
+  /* ===== INTRO SPLASH ===== */
+  #intro{position:fixed;inset:0;z-index:90;background:var(--lemon);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;transition:opacity .8s ease;overflow:hidden}
+  #intro.gone{opacity:0;pointer-events:none}
+  #intro .wm{height:13vh;margin-bottom:1vh;z-index:2}
+  #intro .big{font-family:var(--disp);font-weight:900;color:var(--pink);font-size:15vw;line-height:.86;z-index:2;
+    text-shadow:5px 6px 0 var(--cream);animation:pin .6s cubic-bezier(.2,1.4,.3,1) both}
+  #intro .sub{font-family:var(--cond);color:var(--pink2);font-size:3.4vh;letter-spacing:.12em;text-transform:uppercase;margin-top:2vh;z-index:2}
+  #intro .masc{width:22vh;margin-top:1vh;z-index:2;animation:bob 3.2s ease-in-out infinite}
+  @keyframes pin{0%{transform:scale(2.2) rotate(-6deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+
+  /* ===== CONCEPTS (brand palette) ===== */
+  .c0{} .c0 .q{color:var(--cream);font-size:11vw;animation:slam .5s cubic-bezier(.2,1.4,.3,1) both}
+  @keyframes slam{0%{transform:scale(2.3);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  .c1{flex-direction:column;gap:2.4vh}
+  .c1 .row{white-space:nowrap;font-family:var(--cond);font-size:11vh;letter-spacing:.01em;text-transform:uppercase}
+  .c1 .row span{padding:0 3vw}
+  .c1 .r0{color:var(--pink);animation:scrollL 28s linear infinite}
+  .c1 .r1{color:var(--plum);animation:scrollR 34s linear infinite}
+  .c1 .r2{color:var(--pink2);animation:scrollL 24s linear infinite}
+  @keyframes scrollL{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  @keyframes scrollR{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+
+  .c2{} .c2 .q{color:var(--pink2);font-size:10vw}
+  .c2 .w{display:inline-block;transform-origin:50% 0;animation:flip .55s ease both}
+  @keyframes flip{0%{transform:rotateX(-95deg);opacity:0}100%{transform:rotateX(0);opacity:1}}
+
+  .c3{} .c3 .q{color:var(--cream);font-size:10vw;position:relative;z-index:3;text-shadow:0 6px 26px rgba(0,0,0,.22)}
+  .drop{position:absolute;top:-12vh;font-size:5.5vh;z-index:1;animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(125vh) rotate(220deg)}}
+
+  .c4{} .c4 .q{font-size:10vw;color:rgba(251,239,216,.22)}
+  .c4 .w{transition:color .25s,text-shadow .25s}
+  .c4 .w.on{color:var(--lemon);text-shadow:0 0 30px rgba(252,217,74,.55)}
+
+  .c5{}
+  .c5 .note{position:absolute;width:23vw;min-height:23vw;padding:2vw;display:flex;align-items:center;justify-content:center;
+    text-align:center;font-family:var(--disp);font-size:2.5vw;font-weight:600;color:var(--plum);
+    box-shadow:0 12px 28px rgba(0,0,0,.18);animation:pop .4s cubic-bezier(.2,1.5,.4,1) both}
+  @keyframes pop{0%{transform:scale(0) rotate(var(--r))}100%{transform:scale(1) rotate(var(--r))}}
+
+  .c6{} .c6 .q{font-size:10vw;color:#ffe1f1;
+    text-shadow:0 0 8px #ff4fbf,0 0 22px #ED1E9C,0 0 60px #ED1E9C,0 0 110px #C0117A;animation:flick 3s infinite}
+  @keyframes flick{0%,18%,22%,25%,53%,57%,100%{opacity:1}20%,24%,55%{opacity:.4}}
+
+  .c7{} .c7 .q{font-size:9.5vw;line-height:1.04}
+  .c7 .w{display:inline-block;margin:0 .12em;padding:.02em .2em;border-radius:9px}
+
+  .c8{align-items:flex-start}
+  .c8 .scroll{position:absolute;width:100%;text-align:center;animation:up 32s linear infinite}
+  .c8 .scroll p{font-family:var(--disp);font-weight:900;font-size:6.6vh;color:var(--cream);padding:3vh 8vw;line-height:1.02}
+  .c8 .scroll p:nth-child(3n){color:var(--lemon)}
+  @keyframes up{0%{transform:translateY(100vh)}100%{transform:translateY(-100%)}}
+
+  .c9{} .c9 .q{font-size:11vw;color:var(--cream);position:relative;animation:gjit .18s steps(2) infinite}
+  .c9 .q::before,.c9 .q::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;opacity:.85}
+  .c9 .q::before{color:#ff2d9b;animation:gsh1 1.6s infinite linear alternate}
+  .c9 .q::after{color:#22e0ff;animation:gsh2 1.9s infinite linear alternate}
+  @keyframes gjit{0%{transform:translate(0)}50%{transform:translate(.4px,-.4px)}100%{transform:translate(-.3px,.3px)}}
+  @keyframes gsh1{0%{clip-path:inset(0 0 82% 0);transform:translateX(-6px)}50%{clip-path:inset(46% 0 30% 0);transform:translateX(5px)}100%{clip-path:inset(78% 0 4% 0);transform:translateX(-4px)}}
+  @keyframes gsh2{0%{clip-path:inset(70% 0 8% 0);transform:translateX(6px)}50%{clip-path:inset(20% 0 56% 0);transform:translateX(-5px)}100%{clip-path:inset(4% 0 80% 0);transform:translateX(4px)}}
+
+  /* ===== TRUCK SLIDE (c10) ===== */
+  .c10 .truckslide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6vh}
+  .c10 .tline{font-family:var(--cond);color:var(--lemon);font-size:6.6vh;letter-spacing:.02em;text-transform:uppercase;
+    text-align:center;line-height:.95;min-height:12.5vh;padding:0 6vw;
+    text-shadow:3px 4px 0 var(--plum);animation:tlinein .5s cubic-bezier(.2,1.5,.35,1) both}
+  .c10 .bigwm{height:17.5vh;margin-top:.2vh;filter:drop-shadow(5px 7px 0 rgba(42,10,30,.42));
+    animation:wmpin .6s cubic-bezier(.2,1.5,.35,1) both}
+  .c10 .truckwrap{position:absolute;left:0;right:0;bottom:7.6vh;display:flex;justify-content:center;
+    animation:drivein 1.05s cubic-bezier(.18,.85,.2,1) both}
+  .c10 .truckimg{height:45vh;filter:drop-shadow(0 16px 26px rgba(42,10,30,.4));animation:bobtruck 3.6s ease-in-out infinite}
+  @keyframes tlinein{0%{transform:translateY(-26px) scale(.82);opacity:0}100%{transform:none;opacity:1}}
+  @keyframes wmpin{0%{transform:scale(.55) rotate(-5deg);opacity:0}100%{transform:none;opacity:1}}
+  @keyframes drivein{0%{transform:translateX(-118vw)}100%{transform:translateX(0)}}
+  @keyframes bobtruck{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+  /* ===== ROTATING PIN (Nancy x Nick) — bottom right ===== */
+  #pin{position:fixed;right:2vw;bottom:8.5vh;height:11.5vh;z-index:5;pointer-events:none;
+    filter:drop-shadow(0 10px 20px rgba(42,10,30,.45));animation:pinpop .6s cubic-bezier(.2,1.5,.35,1) both}
+  @keyframes pinpop{0%{transform:scale(.4) rotate(-14deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+
+  /* ===== PHONES / PORTRAIT — same layout, retuned for a narrow frame ===== */
+  @media (max-width:820px), (max-aspect-ratio:1/1){
+    html,body{cursor:auto}
+    .mascot{width:17vw;right:2.5vw;top:1.4vh}
+    .cBall{width:14vw;left:3vw;bottom:11vh}
+    #pin{height:9vh;right:3vw;bottom:10vh}
+    #logo img{height:6.4vh}
+    .q{padding:0 4vw;max-width:94vw}
+    .qb{gap:2vh;padding:0 2vw}
+    .by{font-size:2vh;padding:.45vh 1.4vh}
+    #foot{height:6.4vh;min-height:44px}
+    #foot .run{font-size:2.4vh}
+    #hud{font-size:9px;letter-spacing:.12em;bottom:7.4vh}
+    #name{font-size:11px;letter-spacing:.2em}
+    .c10 .tline{font-size:4.4vh;min-height:9vh;padding:0 5vw}
+    .c10 .bigwm{height:13vh}
+    .c10 .truckimg{height:34vh;max-width:92vw;object-fit:contain}
+    .c8 .scroll p{font-size:4.6vh;padding:2.4vh 6vw}
+    .drop{font-size:4vh}
+    .c9 .q::before,.c9 .q::after{display:none}
+    .c9 .q{text-shadow:2px 0 rgba(255,45,155,.7),-2px 0 rgba(34,224,255,.6)}
+  }
+</style>
+</head>
+<body>
+<div id="logo"><img src="art/logo-cream.png" alt="Nancy"></div>
+<svg class="mascot" viewBox="0 0 140 152"></svg>
+<div id="name"></div>
+<svg class="corner cBall" viewBox="0 0 100 100"><circle cx="50" cy="50" r="49" fill="#EF5BB0"/><path d="M6 36 Q50 14 94 36" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/><path d="M6 64 Q50 86 94 64" fill="none" stroke="#FBEFD8" stroke-width="3.5" stroke-linecap="round"/></svg>
+<svg class="corner cLem" viewBox="0 0 80 70"><path d="M58 14 q14-9 22-3 q-7 12-22 9z" fill="#5FB85A"/><ellipse cx="40" cy="42" rx="30" ry="24" fill="#FCD94A" stroke="#E8B400" stroke-width="2.5"/><ellipse cx="30" cy="34" rx="8" ry="5" fill="#FFF3B0" opacity=".7"/></svg>
+<div id="bg" class="bg10"></div>
+<img id="pin" src="art/ball-green.svg" alt="">
+<div id="stage"></div>
+<div id="hud">1–9 + T opener · ←/→ line · space pause · F fullscreen</div>
+<div id="foot"><div class="run"></div></div>
+
+<script>
+const MASCOT=`
+<circle cx="70" cy="94" r="47" fill="#C6DE5A" stroke="#9CCB3B" stroke-width="3.5"/>
+<path d="M25 66 q45 28 90 0" fill="none" stroke="#FBEFD8" stroke-width="6" stroke-linecap="round"/>
+<path d="M25 122 q45-28 90 0" fill="none" stroke="#FBEFD8" stroke-width="6" stroke-linecap="round"/>
+<ellipse cx="53" cy="77" rx="13" ry="8" fill="#EAF3B8" opacity=".65"/>
+<circle cx="55" cy="92" r="6.5" fill="#2A0A1E"/><circle cx="85" cy="92" r="6.5" fill="#2A0A1E"/>
+<circle cx="57.5" cy="89.5" r="2.2" fill="#fff"/><circle cx="87.5" cy="89.5" r="2.2" fill="#fff"/>
+<path d="M57 107 q13 13 26 0" fill="none" stroke="#2A0A1E" stroke-width="4" stroke-linecap="round"/>
+<circle cx="43" cy="104" r="6.5" fill="#FF8FC4" opacity=".85"/><circle cx="97" cy="104" r="6.5" fill="#FF8FC4" opacity=".85"/>`;
+document.querySelectorAll('.mascot,.masc').forEach(s=>s.innerHTML=MASCOT);
+
+const QUOTES=[
+ {q:"At this club, love means everything, and every point is yours to play.",by:"First serve"},
+ {q:"Start slow. Warm up. Take the long rally.",by:"Long rally"},
+ {q:"Find the sweet spot nobody else can reach.",by:"Sweet spot"},
+ {q:"Play singles or mixed doubles.",by:"Mixed doubles"},
+ {q:"Hold serve, or break it.",by:"Break point"},
+ {q:"No faults here. No lines you can't call.",by:"No faults"},
+ {q:"And when it's match point, take it.",by:"Match point"},
+ {q:"Advantage, you.",by:"Advantage"},
+ {q:"Game. Set. Yours.",by:"Game. Set."},
+ {q:"Second serves are for tennis.",by:"Second serve"},
+ {q:"With Nancy, one is enough.",by:"One is enough"},
+ {q:"Love — Love. Not on our watch.",by:"Love — Love"}
+];
+
+const PINS=['art/ball-green.svg','art/ball-pink.svg','art/ball-green2.svg'];
+['art/smash-ace-hero.png','art/logo-cream.png',...PINS].forEach(s=>{const im=new Image();im.src=s;});
+const RANSOM=['#ED1E9C','#FCD94A','#fff','#2A0A1E','#C0117A'];
+const stage=document.getElementById('stage'),nameEl=document.getElementById('name');
+const rand=a=>a[Math.floor(Math.random()*a.length)];
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+let qi=Math.floor(Math.random()*QUOTES.length),cur=0,cleanup=null,autoTimer=null,paused=false;
+
+document.querySelector('#foot .run').innerHTML=(()=>{const TAGS=['SMASH THE QUIET','ACE THE POINT','SECOND SERVES ARE FOR TENNIS','WITH NANCY, ONE IS ENOUGH','LOVE — LOVE, NOT ON OUR WATCH','ADVANTAGE, YOU','GAME. SET. YOURS.','NO FAULTS HERE','FIND THE SWEET SPOT','NY BRUNCH'];const t=' ★ '+TAGS.join(' ★ ')+' ';return `<span>${t}</span><span>${t}</span>`;})();
+
+function fitLen(el,t){if(!el)return;const n=(t||'').length;
+  const base=(n<13?10.5:n<21?8.5:n<31?6.8:n<43?5.4:4.6);
+  // a vw is far fewer pixels on a portrait phone — scale so the line still fills
+  const k=(window.innerWidth<window.innerHeight)?1.95:1;
+  el.style.fontSize=(base*k)+'vw';}
+function fq(){return stage.querySelector('.q');}
+function cycle(render,ms){render(QUOTES[qi]);const id=setInterval(()=>{qi=(qi+1)%QUOTES.length;render(QUOTES[qi]);},ms);return()=>clearInterval(id);}
+function words(s){return s.split(' ');}
+function block(inner,by){return `<div class="qb"><div class="q">“${inner}”</div><div class="by">— ${esc(by)}</div></div>`;}
+
+const C=[
+ {n:'Opener',c:10,f:()=>{const TT=['SMASH THE QUIET','ACE THE POINT','SECOND SERVES ARE FOR TENNIS','WITH NANCY, ONE IS ENOUGH','LOVE — LOVE. NOT ON OUR WATCH','FIND THE SWEET SPOT','ADVANTAGE, YOU','GAME. SET. YOURS.','NO FAULTS HERE','FIRST COME, FIRST SERVED'];let k=0;stage.innerHTML=`<div class="truckslide"><div class="tline">★ ${TT[0]} ★</div><img class="bigwm" src="art/logo-cream.png" alt="Nancy"><div class="truckwrap"><img class="truckimg" src="art/smash-ace-hero.png" alt="Smash and Ace"></div></div>`;const tl=stage.querySelector('.tline');const id=setInterval(()=>{k=(k+1)%TT.length;tl.style.animation='none';void tl.offsetWidth;tl.style.animation='';tl.textContent='★ '+TT[k]+' ★';},2300);return()=>clearInterval(id);}},
+ {n:'Slam',c:0,f:()=>cycle(it=>{stage.innerHTML=block(esc(it.q),it.by);fitLen(fq(),it.q);},3800)},
+ {n:'Split-flap',c:2,f:()=>cycle(it=>{stage.innerHTML=block(words(it.q).map((w,i)=>`<span class="w" style="animation-delay:${i*.07}s">${esc(w)}&nbsp;</span>`).join(''),it.by);fitLen(fq(),it.q);},3000)},
+ {n:'Ball rain',c:3,f:()=>{let drops='';for(let i=0;i<26;i++){drops+=`<div class="drop" style="left:${Math.random()*100}vw;animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*6}s">🎾</div>`;}const c=cycle(it=>{const o=stage.querySelector('.qb');if(o)o.remove();stage.insertAdjacentHTML('beforeend',block(esc(it.q),it.by));fitLen(fq(),it.q);},3800);stage.insertAdjacentHTML('afterbegin',drops);return c;}},
+ {n:'Karaoke',c:4,f:()=>{let t=[];const r=it=>{stage.innerHTML=block(words(it.q).map(w=>`<span class="w">${esc(w)}</span>`).join(' '),it.by);fitLen(fq(),it.q);stage.querySelectorAll('.q .w').forEach((w,i)=>{t.push(setTimeout(()=>w.classList.add('on'),250+i*240));});};r(QUOTES[qi]);const iv=setInterval(()=>{t.forEach(clearTimeout);t=[];qi=(qi+1)%QUOTES.length;r(QUOTES[qi]);},4000);return()=>{clearInterval(iv);t.forEach(clearTimeout);};}},
+ {n:'Neon',c:6,f:()=>cycle(it=>{stage.innerHTML=block(esc(it.q),it.by);fitLen(fq(),it.q);},3800)},
+ {n:'Ransom',c:7,f:()=>cycle(it=>{stage.innerHTML=block(words(it.q).map(w=>{const fs=(.78+Math.random()*.8).toFixed(2);const rot=(Math.random()*14-7).toFixed(1);const bg=rand(RANSOM);const fg=(bg==='#FCD94A'||bg==='#fff')?'#2A0A1E':'#fff';return `<span class="w" style="font-size:${fs}em;transform:rotate(${rot}deg);background:${bg};color:${fg}">${esc(w)}</span>`;}).join(''),it.by);fitLen(fq(),it.q);},2900)},
+ {n:'Credits',c:8,f:()=>{stage.innerHTML=`<div class="scroll">${QUOTES.map(it=>`<p>“${esc(it.q)}”<span class="cby">— ${esc(it.by)}</span></p>`).join('')}</div>`;return()=>{};}},
+ {n:'Glitch',c:9,f:()=>cycle(it=>{stage.innerHTML=`<div class="qb"><div class="q" data-t="“${esc(it.q)}”">“${esc(it.q)}”</div><div class="by">— ${esc(it.by)}</div></div>`;fitLen(fq(),it.q);},2900)},
+];
+
+function show(i){if(cleanup)cleanup();cur=(i+C.length)%C.length;const cc=C[cur].c;stage.className='';void stage.offsetWidth;stage.className='c'+cc;document.getElementById('bg').className='bg'+cc;document.getElementById('logo').style.display=(cc===10?'none':'block');const pe=document.getElementById('pin');if(cc===10){pe.style.display='none';}else{pe.style.display='block';pe.src=PINS[cur%PINS.length];pe.style.animation='none';void pe.offsetWidth;pe.style.animation='';}stage.innerHTML='';nameEl.textContent=(cur+1<10?'0':'')+(cur+1)+' · '+C[cur].n;cleanup=C[cur].f();}
+function nextC(){show(cur+1);}
+function startAuto(){clearInterval(autoTimer);autoTimer=setInterval(()=>{if(!paused)nextC();},14000);}
+
+document.addEventListener('keydown',e=>{
+  if(e.key>='1'&&e.key<='9'){show(+e.key-1);startAuto();}
+  else if(e.key==='ArrowRight'){qi=(qi+1)%QUOTES.length;show(cur);startAuto();}
+  else if(e.key==='ArrowLeft'){qi=(qi-2+QUOTES.length)%QUOTES.length;show(cur);startAuto();}
+  else if(e.key===' '){paused=!paused;e.preventDefault();}
+  else if(e.key.toLowerCase()==='t'){show(0);startAuto();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+let idle;function wake(){document.body.classList.remove('idle');clearTimeout(idle);idle=setTimeout(()=>document.body.classList.add('idle'),2500);}
+document.addEventListener('mousemove',wake);document.addEventListener('keydown',wake);wake();
+
+show(0);startAuto();
+</script>
+</body>
+</html>
